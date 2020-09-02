@@ -155,7 +155,7 @@ public class AccessoryContent {
      */
     private void createTalbeTitle(Tbl tbl) {
         //给table添加边框
-        TableUtil.addBorders(tbl);
+        TableUtil.addBorders(tbl,"black","4");
         Tr tr = factory.createTr();
         //单元格居中对齐
         Jc jc = new Jc();

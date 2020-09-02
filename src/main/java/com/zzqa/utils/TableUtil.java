@@ -83,11 +83,11 @@ public class TableUtil {
      *
      * @param table
      */
-    public static void addBorders(Tbl table) {
+    public static void addBorders(Tbl table,String borderColor, String borderSize) {
         table.setTblPr(new TblPr());
         CTBorder border = new CTBorder();
-        border.setColor("#95b3d7");
-        border.setSz(new BigInteger("4"));
+        border.setColor(borderColor);
+        border.setSz(new BigInteger(borderSize));
         border.setSpace(new BigInteger("0"));
         border.setVal(STBorder.SINGLE);
 
