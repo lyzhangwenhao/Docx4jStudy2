@@ -25,6 +25,7 @@ public class PageContent8 {
         Relationship relationship = null;
         try {
 
+            Docx4jUtil.addNextPage(wpMLPackage);
             //添加标题四：补充说明
             wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "8 补充说明");
             addParagraph(wpMLPackage, "(1) 本报告涂改无效。");
@@ -33,7 +34,7 @@ public class PageContent8 {
             addParagraph(wpMLPackage, "(4) 本检测报告是基于对机组所安装的CS2000系统的振动数据所获得的信息而编制的，因此，本报告对机组状态所做分析仅供参考。浙江中自庆安新能源技术有限公司给出的所有信息、忠告和建议都仅是基于我们的观察、分析和经验。对于设备状况的最终判断以及所需采取的维护措施，由用户自行决定。");
             addParagraph(wpMLPackage, "(5) 对检测报告若有异议，请于收到报告之日起一个月内向本中心提出，逾期不再受理。");
 
-            Docx4jUtil.addBr(wpMLPackage, 20);
+            Docx4jUtil.addBr(wpMLPackage, 18);
             addParagraph(wpMLPackage, "地址：杭州经济技术开发区6号路260号中自科技园");
             addParagraph(wpMLPackage, "邮编：310018");
             addParagraph(wpMLPackage, "电话：0571-28995840");

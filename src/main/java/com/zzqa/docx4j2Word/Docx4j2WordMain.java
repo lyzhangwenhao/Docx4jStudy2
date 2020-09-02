@@ -65,6 +65,9 @@ public class Docx4j2WordMain {
             //文件内容4：补充说明
             PageContent8 pageContent8 = new PageContent8();
             pageContent8.createPageContent8(wpMLPackage);
+            //附件
+            AccessoryContent accessoryContent = new AccessoryContent();
+            accessoryContent.createAccessoryContent(wpMLPackage);
 
             //保存文件
             File docxFile = new File(targetFilePath);

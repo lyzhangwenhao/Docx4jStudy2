@@ -3,6 +3,7 @@ package com.zzqa.docx4j2Word;
 import com.zzqa.pojo.Characteristic;
 import com.zzqa.pojo.Feature;
 import com.zzqa.utils.Docx4jUtil;
+import com.zzqa.utils.TableUtil;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
@@ -35,8 +36,6 @@ public class PageContent2 {
         if (mapList==null || mapList.size()==0){
             return;
         }
-
-//        Docx4jUtil.addTableTitle(wpMLPackage, "表1 预/报警机组统计");
         Docx4jUtil.addParagraph(wpMLPackage, "各机组上安装有传感器"+mapList.size()+"个，各测点配置如下表所示：");
         //创建一个表格
         Tbl tbl = factory.createTbl();
@@ -62,10 +61,10 @@ public class PageContent2 {
         Tr dataTr = null;
         for (Map<String,String> map:mapList){
             dataTr = factory.createTr();
-            addTableTc(dataTr, map.get("id"), 1000, false, "black");
-            addTableTc(dataTr, map.get("location"), 2500, false, "black");
-            addTableTc(dataTr, map.get("direction"), 1500, false, "black");
-            addTableTc(dataTr, map.get("type"), 2500, false, "black");
+            TableUtil.addTableTc(dataTr, map.get("id"), 1000, false, "20","black",null);
+            TableUtil.addTableTc(dataTr, map.get("location"), 2500, false, "20","black",null);
+            TableUtil.addTableTc(dataTr, map.get("direction"), 1500, false, "20","black",null);
+            TableUtil.addTableTc(dataTr, map.get("type"), 2500, false, "20","black",null);
             tbl.getContent().add(dataTr);
         }
         wpMLPackage.getMainDocumentPart().addObject(tbl);
@@ -78,7 +77,7 @@ public class PageContent2 {
      */
     private void createTalbeTitle(Tbl tbl) {
         //给table添加边框
-        addBorders(tbl);
+        TableUtil.addBorders(tbl);
         Tr tr = factory.createTr();
         //单元格居中对齐
         Jc jc = new Jc();
@@ -88,340 +87,11 @@ public class PageContent2 {
         tbl.setTblPr(tblPr);
 
         //表格表头
-        addTableTcTitle(tr, "序号", 1000, true, "#ffffff","#8064a2");
-        addTableTcTitle(tr, "测点位置", 2500, true, "#ffffff","#8064a2");
-        addTableTcTitle(tr, "方向", 1500, true, "#ffffff","#8064a2");
-        addTableTcTitle(tr, "传感器类型", 2500, true, "#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "序号", 1000, true, "20","#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "测点位置", 2500, true, "20","#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "方向", 1500, true, "20","#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "传感器类型", 2500, true, "20","#ffffff","#8064a2");
         //将tr添加到table中
         tbl.getContent().add(tr);
     }
-
-    /**
-     * 添加TableCell
-     *
-     * @param tableRow
-     * @param content
-     */
-    private void addTableTcTitle(Tr tableRow, String content, int width, boolean isBold, String color, String backGroundColor) {
-        Tc tc = factory.createTc();
-        P p = factory.createP();
-        R r = factory.createR();
-        RPr rPr = factory.createRPr();
-        Text text = factory.createText();
-        BooleanDefaultTrue bCs = rPr.getBCs();
-        if (bCs == null) {
-            bCs = new BooleanDefaultTrue();
-        }
-        bCs.setVal(true);
-        rPr.setBCs(bCs);
-
-        //设置宽度
-        setCellWidth(tc, width);
-        //生成段落添加到单元格中
-        text.setValue(content);
-        //设置字体颜色，加粗
-        Docx4jUtil.setFontColor(rPr, isBold, color);
-        //设置字体
-        Docx4jUtil.setFont(rPr, "宋体");
-        //设置字体大小
-        Docx4jUtil.setFontSize(rPr, "20");
-        //将样式添加到段落中
-        r.getContent().add(rPr);
-
-        r.getContent().add(text);
-        p.getContent().add(r);
-        tc.getContent().add(p);
-        //设置垂直居中
-        setTcVAlign(tc, STVerticalJc.CENTER);
-        //设置水平居中
-        setTcJcAlign(tc, JcEnumeration.CENTER);
-        //去除段后格式
-        PPr pPr = p.getPPr();
-        if (pPr == null) {
-            pPr = factory.createPPr();
-        }
-        Docx4jUtil.setSpacing(pPr);
-        p.setPPr(pPr);
-
-        CTShd shd = new CTShd();
-
-        shd.setVal(STShd.CLEAR);
-
-        shd.setColor("auto");
-
-        shd.setFill(backGroundColor);
-
-        tc.getTcPr().setShd(shd);
-
-        tableRow.getContent().add(tc);
-    }
-
-    /**
-     * 添加TableCell
-     *
-     * @param tableRow
-     * @param content
-     */
-    private void addTableTc(Tr tableRow, String content, int width, boolean isBold, String color) {
-        Tc tc = factory.createTc();
-        P p = factory.createP();
-        R r = factory.createR();
-        RPr rPr = factory.createRPr();
-        Text text = factory.createText();
-        BooleanDefaultTrue bCs = rPr.getBCs();
-        if (bCs == null) {
-            bCs = new BooleanDefaultTrue();
-        }
-        bCs.setVal(true);
-        rPr.setBCs(bCs);
-
-        //设置宽度
-        setCellWidth(tc, width);
-        //生成段落添加到单元格中
-        text.setValue(content);
-        //设置字体颜色，加粗
-        Docx4jUtil.setFontColor(rPr, isBold, color);
-        //设置字体
-        Docx4jUtil.setFont(rPr, "宋体");
-        //设置字体大小
-        Docx4jUtil.setFontSize(rPr, "20");
-        //将样式添加到段落中
-        r.getContent().add(rPr);
-
-        r.getContent().add(text);
-        p.getContent().add(r);
-        tc.getContent().add(p);
-        //设置垂直居中
-        setTcVAlign(tc, STVerticalJc.CENTER);
-        //设置水平居中
-        setTcJcAlign(tc, JcEnumeration.CENTER);
-        //去除段后格式
-        PPr pPr = p.getPPr();
-        if (pPr == null) {
-            pPr = factory.createPPr();
-        }
-        Docx4jUtil.setSpacing(pPr);
-        p.setPPr(pPr);
-
-        tableRow.getContent().add(tc);
-    }
-
-    /**
-     * 本方法创建一个单元格属性集对象和一个表格宽度对象. 将给定的宽度设置到宽度对象然后将其添加到
-     * 属性集对象. 最后将属性集对象设置到单元格中.
-     */
-    private void setCellWidth(Tc tableCell, int width) {
-        TcPr tableCellProperties = new TcPr();
-        TblWidth tableWidth = new TblWidth();
-        tableWidth.setW(BigInteger.valueOf(width));
-        tableCellProperties.setTcW(tableWidth);
-        tableCell.setTcPr(tableCellProperties);
-    }
-
-    /**
-     * 本方法为表格添加边框
-     *
-     * @param table
-     */
-    private void addBorders(Tbl table) {
-        table.setTblPr(new TblPr());
-        CTBorder border = new CTBorder();
-        border.setColor("#95b3d7");
-        border.setSz(new BigInteger("4"));
-        border.setSpace(new BigInteger("0"));
-        border.setVal(STBorder.SINGLE);
-
-        TblBorders borders = new TblBorders();
-        borders.setBottom(border);
-        borders.setLeft(border);
-        borders.setRight(border);
-        borders.setTop(border);
-        borders.setInsideH(border);
-        borders.setInsideV(border);
-        table.getTblPr().setTblBorders(borders);
-    }
-
-    private TcPr getTcPr(Tc tc) {
-        TcPr tcPr = tc.getTcPr();
-        if (tcPr == null) {
-            tcPr = new TcPr();
-            tc.setTcPr(tcPr);
-        }
-        return tcPr;
-    }
-
-    /**
-     * @Description: 设置单元格垂直对齐方式
-     */
-    private void setTcVAlign(Tc tc, STVerticalJc vAlignType) {
-        if (vAlignType != null) {
-            TcPr tcPr = getTcPr(tc);
-            CTVerticalJc vAlign = new CTVerticalJc();
-            vAlign.setVal(vAlignType);
-            tcPr.setVAlign(vAlign);
-        }
-    }
-
-    /**
-     * @Description: 设置单元格水平对齐方式
-     */
-    private void setTcJcAlign(Tc tc, JcEnumeration jcType) {
-        if (jcType != null) {
-            List<P> pList = getTcAllP(tc);
-            for (P p : pList) {
-                setParaJcAlign(p, jcType);
-            }
-        }
-    }
-
-    private List<P> getTcAllP(Tc tc) {
-        List<Object> objList = getAllElementFromObject(tc, P.class);
-        List<P> pList = new ArrayList<P>();
-        if (objList == null) {
-            return pList;
-        }
-        for (Object obj : objList) {
-            if (obj instanceof P) {
-                P p = (P) obj;
-                pList.add(p);
-            }
-        }
-        return pList;
-    }
-
-    /**
-     * @Description: 得到指定类型的元素
-     */
-    private static List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
-        List<Object> result = new ArrayList<Object>();
-        if (obj instanceof JAXBElement)
-            obj = ((JAXBElement<?>) obj).getValue();
-        if (obj.getClass().equals(toSearch))
-            result.add(obj);
-        else if (obj instanceof ContentAccessor) {
-            List<?> children = ((ContentAccessor) obj).getContent();
-            for (Object child : children) {
-                result.addAll(getAllElementFromObject(child, toSearch));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @Description: 设置段落水平对齐方式
-     */
-    private void setParaJcAlign(P paragraph, JcEnumeration hAlign) {
-        if (hAlign != null) {
-            PPr pprop = paragraph.getPPr();
-            if (pprop == null) {
-                pprop = new PPr();
-                paragraph.setPPr(pprop);
-            }
-            Jc align = new Jc();
-            align.setVal(hAlign);
-            pprop.setJc(align);
-        }
-    }
-
-    /**
-     * @Description: 跨行合并
-     */
-    private void mergeCellsVertically(Tbl tbl, int col, int fromRow, int toRow) {
-        if (col < 0 || fromRow < 0 || toRow < 0) {
-            return;
-        }
-        for (int rowIndex = fromRow; rowIndex <= toRow; rowIndex++) {
-            Tc tc = getTc(tbl, rowIndex, col);
-            if (tc == null) {
-                break;
-            }
-            TcPr tcPr = getTcPr(tc);
-            TcPrInner.VMerge vMerge = tcPr.getVMerge();
-            if (vMerge == null) {
-                vMerge = new TcPrInner.VMerge();
-                tcPr.setVMerge(vMerge);
-            }
-            if (rowIndex == fromRow) {
-                vMerge.setVal("restart");
-            } else {
-                vMerge.setVal("continue");
-            }
-        }
-    }
-
-    /**
-     * @Description: 得到表格所有的行
-     */
-    private List<Tr> getTblAllTr(Tbl tbl) {
-        List<Object> objList = getAllElementFromObject(tbl, Tr.class);
-        List<Tr> trList = new ArrayList<Tr>();
-        if (objList == null) {
-            return trList;
-        }
-        for (Object obj : objList) {
-            if (obj instanceof Tr) {
-                Tr tr = (Tr) obj;
-                trList.add(tr);
-            }
-        }
-        return trList;
-
-    }
-
-    /**
-     * @Description:得到指定位置的单元格
-     */
-    private Tc getTc(Tbl tbl, int row, int cell) {
-        if (row < 0 || cell < 0) {
-            return null;
-        }
-        List<Tr> trList = getTblAllTr(tbl);
-        if (row >= trList.size()) {
-            return null;
-        }
-        List<Tc> tcList = getTrAllCell(trList.get(row));
-        if (cell >= tcList.size()) {
-            return null;
-        }
-        return tcList.get(cell);
-    }
-
-    /**
-     * @Description:得到所有表格
-     */
-    private List<Tbl> getAllTbl(WordprocessingMLPackage wordMLPackage) {
-        MainDocumentPart mainDocPart = wordMLPackage.getMainDocumentPart();
-        List<Object> objList = getAllElementFromObject(mainDocPart, Tbl.class);
-        if (objList == null) {
-            return null;
-        }
-        List<Tbl> tblList = new ArrayList<Tbl>();
-        for (Object obj : objList) {
-            if (obj instanceof Tbl) {
-                Tbl tbl = (Tbl) obj;
-                tblList.add(tbl);
-            }
-        }
-        return tblList;
-    }
-
-    /**
-     * @Description: 获取所有的单元格
-     */
-    private List<Tc> getTrAllCell(Tr tr) {
-        List<Object> objList = getAllElementFromObject(tr, Tc.class);
-        List<Tc> tcList = new ArrayList<Tc>();
-        if (objList == null) {
-            return tcList;
-        }
-        for (Object tcObj : objList) {
-            if (tcObj instanceof Tc) {
-                Tc objTc = (Tc) tcObj;
-                tcList.add(objTc);
-            }
-        }
-        return tcList;
-    }
-
-
 }
