@@ -62,9 +62,9 @@ public class PageContent2 {
         for (Map<String,String> map:mapList){
             dataTr = factory.createTr();
             TableUtil.addTableTc(dataTr, map.get("id"), 1000, false, "20","black",null);
-            TableUtil.addTableTc(dataTr, map.get("location"), 2500, false, "20","black",null);
+            TableUtil.addTableTc(dataTr, map.get("location"), 3000, false, "20","black",null);
             TableUtil.addTableTc(dataTr, map.get("direction"), 1500, false, "20","black",null);
-            TableUtil.addTableTc(dataTr, map.get("type"), 2500, false, "20","black",null);
+            TableUtil.addTableTc(dataTr, map.get("type"), 3000, false, "20","black",null);
             tbl.getContent().add(dataTr);
         }
         wpMLPackage.getMainDocumentPart().addObject(tbl);
@@ -88,9 +88,9 @@ public class PageContent2 {
 
         //表格表头
         TableUtil.addTableTc(tr, "序号", 1000, true, "20","#ffffff","#8064a2");
-        TableUtil.addTableTc(tr, "测点位置", 2500, true, "20","#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "测点位置", 3000, true, "20","#ffffff","#8064a2");
         TableUtil.addTableTc(tr, "方向", 1500, true, "20","#ffffff","#8064a2");
-        TableUtil.addTableTc(tr, "传感器类型", 2500, true, "20","#ffffff","#8064a2");
+        TableUtil.addTableTc(tr, "传感器类型", 3000, true, "20","#ffffff","#8064a2");
         //将tr添加到table中
         tbl.getContent().add(tr);
     }

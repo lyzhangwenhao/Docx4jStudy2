@@ -13,7 +13,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * ClassName: Test2
+ * ClassName: Cover
  * Description:
  *
  * @author 张文豪
@@ -71,55 +71,6 @@ public class Cover {
             e.printStackTrace();
         }
         return wpMLPackage;
-    }
-
-    /**
-     * 创建包含图片的内容
-     *
-     * @param word
-     * @param sourcePart
-     * @param imageFilePath
-     * @return
-     * @throws Exception
-     */
-    public static P newImage(WordprocessingMLPackage word,
-                             Part sourcePart,
-                             String imageFilePath) throws Exception {
-        BinaryPartAbstractImage imagePart = BinaryPartAbstractImage
-                .createImagePart(word, sourcePart, new File(imageFilePath));
-        //随机数ID
-        int id = (int) (Math.random() * 10000);
-        //这里的id不重复即可
-        Inline inline = imagePart.createImageInline("image", "image", id, id * 2, false);
-
-        ObjectFactory factory = new ObjectFactory();
-        Drawing drawing = factory.createDrawing();
-        drawing.getAnchorOrInline().add(inline);
-
-        R r = factory.createR();
-        r.getContent().add(drawing);
-
-        P p = factory.createP();
-        p.getContent().add(r);
-
-        return p;
-    }
-
-    /**
-     * 插入下一页
-     * @param wpMLPackage
-     */
-    public void addNextPage(WordprocessingMLPackage wpMLPackage){
-        P para = objectFactory.createP();
-        SectPr sectPr = objectFactory.createSectPr();
-        PPr pPr = objectFactory.createPPr();
-        SectPr.Type sectPrType = objectFactory.createSectPrType();
-
-        sectPrType.setVal("nextPage");
-        sectPr.setType(sectPrType);
-        pPr.setSectPr(sectPr);
-        para.setPPr(pPr);
-        wpMLPackage.getMainDocumentPart().addObject(para);
     }
 
     /**
@@ -181,7 +132,6 @@ public class Cover {
      * @param word 标题内容
      */
     public void addTitleWordToPackage(WordprocessingMLPackage wpMLPackage, String word){
-//        ObjectFactory objectFactory = new ObjectFactory();
         P para = objectFactory.createP();
         R run = objectFactory.createR();
         Text text = objectFactory.createText();

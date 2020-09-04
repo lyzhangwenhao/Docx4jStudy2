@@ -1,24 +1,26 @@
-package com.zzqa.utils;
-import java.math.BigInteger;
+package com.zzqa.docx4j2Word;
 
 import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.wml.Numbering;
 import org.docx4j.wml.P;
+import org.docx4j.wml.PPrBase;
 import org.docx4j.wml.PPrBase.NumPr;
 import org.docx4j.wml.PPrBase.NumPr.Ilvl;
 import org.docx4j.wml.PPrBase.NumPr.NumId;
-import org.docx4j.wml.Style;
+
+import javax.xml.bind.JAXBException;
+import java.math.BigInteger;
 /**
- * ClassName: NumberingRestart
+ * ClassName: NumberingCreate
  * Description:
  *
  * @author 张文豪
  * @date 2020/9/2 10:48
  */
-
 
 
 /**
@@ -28,81 +30,52 @@ import org.docx4j.wml.Style;
  *
  * @author Jason Harrop
  */
-public class NumberingRestart {
+public class NumberingCreate {
 
-    static org.docx4j.wml.ObjectFactory factory = Context.getWmlObjectFactory();
+    private org.docx4j.wml.ObjectFactory factory = Context.getWmlObjectFactory();
 
-    static String filename = "OUT_NumberingRestart.docx";
+    private WordprocessingMLPackage wordMLPackage ;
 
-    public static void main(String[] args) throws Exception {
+    private NumberingDefinitionsPart ndp;
 
-        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+    {
+        try {
+            ndp = new NumberingDefinitionsPart();
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        }
+    }
+    //使用原序号
+    public void unmarshlDefaultNumbering(){
+        try {
+            ndp.unmarshalDefaultNumbering();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
 
-        // Add numbering part
-        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-        wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
-        ndp.setJaxbElement( (Numbering) XmlUtils.unmarshalString(initialNumbering) );
+    public NumberingCreate(WordprocessingMLPackage wordMLPackage) {
+        this.wordMLPackage = wordMLPackage;
+        try {
+            wordMLPackage.getMainDocumentPart().addTargetPart(ndp);
+            ndp.setJaxbElement( (org.docx4j.wml.Numbering) XmlUtils.unmarshalString(initialNumbering) );
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
 
-        ndp.unmarshalDefaultNumbering();
-        Numbering numbering = factory.createNumbering();
-        Style style = factory.createStyle();
-        style.setType("numbering");
+    }
 
-
-
-        // Add some document content
-        wordMLPackage.getMainDocumentPart().addParagraphOfText("Example of restarting numbering");
-
-        P p = createNumberedParagraph(1, 0, "text on top level" );
-        wordMLPackage.getMainDocumentPart().addObject(p);
-
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(1, 0, "more text on top level" ));
-
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(1, 1, "text on level 1" ));
-
-        // Ok, lets restart numbering
-        long newNumId = ndp.restart(1, 0, 1);
-
-//        ndp.init();
-
-        //原序号
-//        ndp.unmarshalDefaultNumbering();
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(2, 0, "text on top level - restarted" ));
-
-        ndp.restart(2, 0, 1);
-        // After first using newNumId, it doesn't matter whether
-        // subsequent paragraphs use that or the original numId
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(1, 0, "text on top level - using newNumId" ));
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(1, 0, "text on top level - using newNumId" ));
-        long restart = ndp.restart(1, 0, 1);
-        System.out.println(restart);
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(restart, 0, "text on top level - using newNumId" ));
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(4, 0, "text on top level - using newNumId" ));
-
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(4, 0, "text on top level - using original NumId" ));
-        wordMLPackage.getMainDocumentPart().addObject(
-                createNumberedParagraph(4, 0, "text on top level - using original NumId" ));
-
-        // Now save it
-        wordMLPackage.save(new java.io.File( "D:/AutoExport/docx4j2/" + filename) );
-
-        System.out.println("Done. Saved " + filename);
-
+    public long restart(long numID, long ilvl, long val){
+        return ndp.restart(numID, ilvl, val);
     }
 
     /**
      *
      * @return
      */
-    private static P createNumberedParagraph(long numId, long ilvl, String paragraphText ) {
+    public P createNumberedParagraph(long numId, long ilvl, String paragraphText ,int firstLineChars) {
 
         P  p = factory.createP();
 
@@ -115,6 +88,13 @@ public class NumberingRestart {
         p.getContent().add(run);
 
         org.docx4j.wml.PPr ppr = factory.createPPr();
+        //缩进
+        PPrBase.Ind ind = ppr.getInd();
+        if (ind==null){
+            ind = factory.createPPrBaseInd();
+        }
+        ind.setFirstLineChars(BigInteger.valueOf(firstLineChars));
+        ppr.setInd(ind);
         p.setPPr( ppr );
 
         // Create and add <w:numPr>
@@ -136,7 +116,7 @@ public class NumberingRestart {
     }
 
 
-    static final String initialNumbering = "<w:numbering xmlns:ve=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\">"
+    private final String initialNumbering = "<w:numbering xmlns:ve=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\">"
             + "<w:abstractNum w:abstractNumId=\"0\">"
             + "<w:nsid w:val=\"2DD860C0\"/>"
             + "<w:multiLevelType w:val=\"multilevel\"/>"

@@ -216,6 +216,9 @@ public class Docx4jUtil {
      */
     public static byte[] convertImageToByteArray(File file) {
         InputStream is = null;
+        if (file==null){
+            return null;
+        }
         long length = file.length();
         byte [] bytes = new byte[(int)length];
         try {

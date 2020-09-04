@@ -31,6 +31,7 @@ public class TableUtil {
         R r = factory.createR();
         RPr rPr = factory.createRPr();
         Text text = factory.createText();
+        //禁止行号(不设置没什么影响)
         BooleanDefaultTrue bCs = rPr.getBCs();
         if (bCs == null) {
             bCs = new BooleanDefaultTrue();
@@ -75,6 +76,69 @@ public class TableUtil {
             tc.getTcPr().setShd(shd);
         }
 
+        tableRow.getContent().add(tc);
+    }
+
+    /**
+     * 添加有序号的tc
+     * @param tableRow
+     * @param ps
+     * @param width
+     * @param isBold
+     * @param fontSize
+     * @param fontColor
+     * @param backgroundcolor
+     */
+    public static void addTableTcNumbering(Tr tableRow, P[] ps, int width, boolean isBold, String fontSize, String fontColor, String backgroundcolor) {
+        Tc tc = factory.createTc();
+        if (ps!=null){
+            for (P p : ps) {
+                R r = factory.createR();
+                RPr rPr = factory.createRPr();
+                BooleanDefaultTrue bCs = rPr.getBCs();
+                if (bCs == null) {
+                    bCs = new BooleanDefaultTrue();
+                }
+                bCs.setVal(true);
+                rPr.setBCs(bCs);
+
+                //设置宽度
+                setCellWidth(tc, width);
+                //生成段落添加到单元格中
+                //设置字体颜色，加粗
+                Docx4jUtil.setFontColor(rPr, isBold, fontColor);
+                //设置字体
+                Docx4jUtil.setFont(rPr, "宋体");
+                //设置字体大小
+                Docx4jUtil.setFontSize(rPr, fontSize);
+                //将样式添加到段落中
+                r.getContent().add(rPr);
+
+                p.getContent().add(r);
+                //设置垂直居中
+                setTcVAlign(tc, STVerticalJc.CENTER);
+                //设置水平居中
+//                setTcJcAlign(tc, JcEnumeration.CENTER);
+                //去除段后格式
+//                PPr pPr = p.getPPr();
+//                if (pPr == null) {
+//                    pPr = factory.createPPr();
+//                }
+//                Docx4jUtil.setSpacing(pPr);
+//                p.setPPr(pPr);
+
+                tc.getContent().add(p);
+
+                if (backgroundcolor != null && !"".equals(backgroundcolor)) {
+                    //设置背景颜色
+                    CTShd shd = new CTShd();
+                    shd.setVal(STShd.CLEAR);
+                    shd.setColor("auto");
+                    shd.setFill(backgroundcolor);
+                    tc.getTcPr().setShd(shd);
+                }
+            }
+        }
         tableRow.getContent().add(tc);
     }
 
