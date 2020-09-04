@@ -58,9 +58,6 @@ public class Docx4j2WordMain {
             //文件内容2:运行状况
             PageContent2 pageContent2 = new PageContent2();
             pageContent2.createPageContent2(wpMLPackage, mapList);
-            //文件内容3：震动图谱
-//            PageContent3 pageContent3 = new PageContent3();
-//            pageContent3.createPageContent3(wpMLPackage, chartData, 0);
             //新建创建序号对象
             NumberingCreate numberingCreate = new NumberingCreate(wpMLPackage);
             //使用原序号
@@ -209,36 +206,7 @@ public class Docx4j2WordMain {
 
 
 
-    /**
-     * 将数据转换为double数组
-     *
-     * @param dataY
-     * @return
-     */
-    private static double[][] string2DoubleArray(String dataY) {
-        String[] split = dataY.split(",");
-        double[] dataTemp = new double[split.length];
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                dataTemp[i] = Double.parseDouble(split[i]);
-            }
-        }
-        double[][] data = {dataTemp};
-        return data;
-    }
-
-    /**
-     * String类型转换为Double类型
-     * @param colKeys
-     * @return
-     */
-    public static double[] string2Double(String[] colKeys){
-        double [] colKeys1 = new double[colKeys.length];
-        for (int i=0; i<colKeys.length; i++){
-            colKeys1[i] = Double.parseDouble(colKeys[i]);
-        }
-        return colKeys1;
-    }
+    
 
     public static String getDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
