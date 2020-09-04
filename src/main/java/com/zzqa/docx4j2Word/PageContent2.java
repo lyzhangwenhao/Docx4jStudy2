@@ -1,16 +1,10 @@
 package com.zzqa.docx4j2Word;
 
-import com.zzqa.pojo.Characteristic;
-import com.zzqa.pojo.Feature;
 import com.zzqa.utils.Docx4jUtil;
 import com.zzqa.utils.TableUtil;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
-import javax.xml.bind.JAXBElement;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
