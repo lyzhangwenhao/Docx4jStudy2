@@ -7,6 +7,8 @@ import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
 import org.docx4j.wml.PPr;
 import org.docx4j.wml.STShd;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -27,7 +29,7 @@ public class PageContent6 {
     private NumberingCreate numberingCreate;
     private long restart = 1;
 
-    public void createPageContent6(WordprocessingMLPackage wpMLPackage, List<FaultUnitInfo> faultUnitInfoList, NumberingCreate numberingCreate) {
+    public void createPageContent(WordprocessingMLPackage wpMLPackage, List<FaultUnitInfo> faultUnitInfoList, NumberingCreate numberingCreate) {
         if (numberingCreate == null) {
             this.numberingCreate = new NumberingCreate(wpMLPackage);
         } else {
@@ -97,6 +99,8 @@ public class PageContent6 {
             num++;
 
         }
+        //TODO 删
+        System.out.println("PageContent6 Success......");
 
     }
 }

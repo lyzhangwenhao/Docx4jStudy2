@@ -18,7 +18,7 @@ public class PageContent5 {
     private NumberingCreate numberingCreate;
     private long restart = 1;
 
-    public void createPageContent5(WordprocessingMLPackage wpMLPackage, String name, List<String> list, NumberingCreate numberingCreate) {
+    public void createPageContent(WordprocessingMLPackage wpMLPackage, String name, List<String> list, NumberingCreate numberingCreate) {
         if (numberingCreate==null){
             this.numberingCreate = new NumberingCreate(wpMLPackage);
         }else {
@@ -31,7 +31,7 @@ public class PageContent5 {
         }
         Tbl tbl = factory.createTbl();
         //给table添加边框
-        TableUtil.addBorders(tbl, "#000000", "4");
+        TableUtil.addBorders(tbl, "#4bacc6", "4");
         //单元格居中对齐
         Jc jc = new Jc();
         jc.setVal(JcEnumeration.CENTER);
@@ -44,6 +44,8 @@ public class PageContent5 {
         createTblData(tbl, list);
         //将表格添加到文档中
         wpMLPackage.getMainDocumentPart().addObject(tbl);
+        //TODO 删
+        System.out.println("PageContent5 Success......");
     }
 
     private void createTblData(Tbl tbl, List<String> list) {
@@ -83,11 +85,11 @@ public class PageContent5 {
         Tr tr1 = factory.createTr();
         Tr tr2 = factory.createTr();
         //第一行表头
-        TableUtil.addTableTc(tr1, "上海东滩风电场", 2000, true, "22", "#ffffff", "#8064a2");
-        TableUtil.addTableTc(tr1, "上海东滩风电场", 7000, true, "22", "#ffffff", "#8064a2");
+        TableUtil.addTableTc(tr1, "上海东滩风电场", 2000, true, "22", "#ffffff", "#4bacc6");
+        TableUtil.addTableTc(tr1, "上海东滩风电场", 7000, true, "22", "#ffffff", "#4bacc6");
         //第二行表头
-        TableUtil.addTableTc(tr2, "机组编号", 2000, true, "22", "#ffffff", "#8064a2");
-        TableUtil.addTableTc(tr2, "处理意见", 7000, true, "22", "#ffffff", "#8064a2");
+        TableUtil.addTableTc(tr2, "机组编号", 2000, true, "22", "#ffffff", "#4bacc6");
+        TableUtil.addTableTc(tr2, "处理意见", 7000, true, "22", "#ffffff", "#4bacc6");
 
         //将tr添加到table中
         tbl.getContent().add(tr1);

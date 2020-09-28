@@ -20,8 +20,8 @@ import java.math.BigInteger;
 public class PageContent1 {
     private ObjectFactory objectFactory = new ObjectFactory();
 
-    public void createPageContent1(WordprocessingMLPackage wpMLPackage,
-                                                      String paragraContent, int normalPart, int warningPart, int alarmPart){
+    public void createPageContent(WordprocessingMLPackage wpMLPackage,
+                                  String paragraContent, int normalPart, int warningPart, int alarmPart){
         try {
             AddingAFooter addingAFooter = new AddingAFooter();
             Relationship relationship = addingAFooter.createFooterPart(wpMLPackage,"◆ 版权所有 © 2018-2020 浙江中自庆安新能源技术有限公司 &&" +

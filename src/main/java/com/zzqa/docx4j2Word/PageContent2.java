@@ -24,7 +24,7 @@ public class PageContent2 {
      * @param wpMLPackage 传入的wpMLPackage对象
      * @param mapList
      */
-    public void createPageContent2(WordprocessingMLPackage wpMLPackage, List<Map<String,String>> mapList) {
+    public void createPageContent(WordprocessingMLPackage wpMLPackage, List<Map<String,String>> mapList) {
         //添加标题一：项目概述
         wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "2 测点安装及配置");
         if (mapList==null || mapList.size()==0){

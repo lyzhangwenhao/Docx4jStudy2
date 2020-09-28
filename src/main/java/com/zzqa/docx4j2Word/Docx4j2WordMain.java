@@ -42,10 +42,14 @@ public class Docx4j2WordMain {
             String targetFile = targetFilePath + "/" + fileName;
             //PageContent2的数据准备
             List<Map<String,String>> mapList = createData();
+            //PageContent3数据准备
+            List<Map<String, String>> dataContent3 = createDataContent3();
             //PageContent5数据准备
             List<String> dataContent5 = createDataContent5();
             //PageContent6数据准备
             List<FaultUnitInfo> dataContent6 = createDataContent6();
+            //Pagecontent7数据准备
+            Map<String, String[]> titleDataContent7 = createTitleDataContent7();
 
             Cover cover = new Cover();
             //创建封面
@@ -54,24 +58,33 @@ public class Docx4j2WordMain {
             Docx4jUtil.addNextSection(wpMLPackage);
             //文件内容1:项目概述
             PageContent1 pageContent1 = new PageContent1();
-            pageContent1.createPageContent1(wpMLPackage, paragraphContent, normalPart, warningPart, alarmPart);
+            pageContent1.createPageContent(wpMLPackage, paragraphContent, normalPart, warningPart, alarmPart);
             //文件内容2:运行状况
             PageContent2 pageContent2 = new PageContent2();
-            pageContent2.createPageContent2(wpMLPackage, mapList);
+            pageContent2.createPageContent(wpMLPackage, mapList);
+            //第三章节：评估标准
+            PageContent3 pageContent3 = new PageContent3();
+            pageContent3.createPageContent(wpMLPackage,dataContent3);
             //新建创建序号对象
             NumberingCreate numberingCreate = new NumberingCreate(wpMLPackage);
             //使用原序号
 //            numberingCreate.unmarshlDefaultNumbering();
 
+            //第四章节：
+            PageContent4 pageContent4= new PageContent4();
+            pageContent4.createPageContent(wpMLPackage);
             //第五章节：处理建议
             PageContent5 pageContent5 = new PageContent5();
-            pageContent5.createPageContent5(wpMLPackage, reportName, dataContent5,numberingCreate);
+            pageContent5.createPageContent(wpMLPackage, reportName, dataContent5,numberingCreate);
             //第六章节：故障机组详细分析
             PageContent6 pageContent6 = new PageContent6();
-            pageContent6.createPageContent6(wpMLPackage, dataContent6,numberingCreate);
+            pageContent6.createPageContent(wpMLPackage, dataContent6,numberingCreate);
+            //第七章节：正常机组数据
+            PageContent7 pageContent7 = new PageContent7();
+            pageContent7.createPageContent(wpMLPackage, titleDataContent7);
             //文件内容8：补充说明
             PageContent8 pageContent8 = new PageContent8();
-            pageContent8.createPageContent8(wpMLPackage,numberingCreate);
+            pageContent8.createPageContent(wpMLPackage,numberingCreate);
             //附件
             AccessoryContent accessoryContent = new AccessoryContent();
             accessoryContent.createAccessoryContent(wpMLPackage);
@@ -89,9 +102,36 @@ public class Docx4j2WordMain {
 
             wpMLPackage.save(new File(targetFile));
 
-        } catch (Exception e) {
-            e.printStackTrace();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+    public static Map<String,String[]> createTitleDataContent7(){
+        Map<String,String[]> map = new HashMap<>();
+        String[] arr1 = {"主轴承径向"};
+        String[] arr2 = {"输入轴径向","行星齿轮径向","高速轴传动端轴承径向","输入轴径向"};
+        String[] arr3 = {"传动端径向","自由端径向"};
+        map.put("主轴承(g)", arr1);
+        map.put("齿轮箱(g)", arr2);
+        map.put("发电机(g)", arr3);
+        return map;
+    }
+
+    public static List<Map<String,String>> createDataContent3(){
+        List<Map<String,String>> dataList = new ArrayList<>();
+        for (int i=0; i<10; i++){
+            Map<String,String> map = new HashMap<>();
+            map.put("主轴承1", "3.0/-1.0");
+//            map.put("主轴承2", "3.0/-1.0");
+            map.put("齿轮箱输入轴", "3.0/-1.0");
+            map.put("齿轮箱二级齿圈", "3.0/-1.0");
+            map.put("齿轮箱输出轴", "");
+            map.put("发电机前轴承", "3.0/-1.0");
+            map.put("发电机后轴承", "3.0/-1.0");
+            dataList.add(map);
         }
+        return dataList;
     }
 
     public static List<String> createDataContent5(){
@@ -206,7 +246,7 @@ public class Docx4j2WordMain {
 
 
 
-    
+
 
     public static String getDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间

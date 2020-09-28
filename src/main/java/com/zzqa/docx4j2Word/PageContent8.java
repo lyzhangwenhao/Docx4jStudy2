@@ -23,7 +23,7 @@ public class PageContent8 {
      * 固定的第8部分内容
      * @param wpMLPackage
      */
-    public void createPageContent8(WordprocessingMLPackage wpMLPackage,NumberingCreate numberingCreate){
+    public void createPageContent(WordprocessingMLPackage wpMLPackage, NumberingCreate numberingCreate){
         if (numberingCreate!=null){
             this.numberingCreate = numberingCreate;
         }else {
