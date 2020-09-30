@@ -47,13 +47,21 @@
                 </exclusions>
                  -->
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-JAXB-Internal</artifactId>
-            <version>8.1.4</version>
-            <!--  <scope>test</scope>-->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
+
+
+        <!--        <dependency>-->
+<!--            <groupId>org.docx4j</groupId>-->
+<!--            <artifactId>docx4j-JAXB-Internal</artifactId>-->
+<!--            <version>8.1.4</version>-->
+<!--            &lt;!&ndash;  <scope>test</scope>&ndash;&gt;-->
+<!--        </dependency>-->
 
 
     </dependencies>

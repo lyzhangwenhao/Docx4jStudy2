@@ -165,4 +165,5 @@ public class ParagraphTest {
         tableCellProperties.setTcW(tableWidth);
         tableCell.setTcPr(tableCellProperties);
     }
+
 }
