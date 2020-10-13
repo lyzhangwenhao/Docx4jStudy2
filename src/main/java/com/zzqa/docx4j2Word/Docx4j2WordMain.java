@@ -51,8 +51,12 @@ public class Docx4j2WordMain {
             //PageContent6数据准备
             List<Map<String,Object>> dataContent6 = createDataContent6();
             //Pagecontent7数据准备
-            Map<String, String[]> titleDataContent7 = createTitleDataContent7();
-            List<Map<String, String>> dataContent7 = createDataContent7();
+            Map<String, String[]> titleDataContent71 = createTitleDataContent71();
+            List<Map<String, String>> dataContent71 = createDataContent71();
+            Map<String, String[]> titleDataContent72 = createTitleDataContent72();
+            List<Map<String, String>> dataContent72 = createDataContent72();
+            Map<String, String[]> titleDataContent73 = createTitleDataContent73();
+            List<Map<String, String>> dataContent73 = createDataContent73();
 
             Cover cover = new Cover();
             //创建封面
@@ -86,7 +90,7 @@ public class Docx4j2WordMain {
             pageContent6.createPageContent(wpMLPackage, dataContent6,numberingCreate);
             //第七章节：正常机组数据
             PageContent.PageContent7 pageContent7 = pageContent.new PageContent7();
-            pageContent7.createPageContent(wpMLPackage, titleDataContent7,dataContent7);
+            pageContent7.createPageContent(wpMLPackage, titleDataContent71, dataContent71, titleDataContent72, dataContent72, titleDataContent73, dataContent73);
             //文件内容8：补充说明
             PageContent.PageContent8 pageContent8 = pageContent.new PageContent8();
             pageContent8.createPageContent(wpMLPackage,numberingCreate);
@@ -125,14 +129,64 @@ public class Docx4j2WordMain {
 
     public static List<Map<String,String>> createDataContent4(){
         List<Map<String,String>> dataList = new ArrayList<>();
+        String[]arr = {"正常","注意","警告","报警","危险"};
+        Random random = new Random();
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
             map.put("机组编号", (i+1)+"#");
-            map.put("主轴承", "主轴承");
-            map.put("齿轮箱", "齿轮箱");
-            map.put("发电机", "发电机");
-            map.put("分析结论", "分析结论");
-            map.put("与上季度振动趋势对比", "与上季度振动趋势对比");
+            map.put("主轴承", arr[random.nextInt(5)]);
+            map.put("齿轮箱", arr[random.nextInt(5)]);
+            map.put("发电机", arr[random.nextInt(5)]);
+            map.put("分析结论", "1.齿轮箱行星轮系可能存在啮合不良；\n" +
+                    "2.发电机自由端轴承严重磨损。\n");
+            map.put("与上季度振动趋势对比", "基本不变。");
+            dataList.add(map);
+        }
+        return dataList;
+    }
+    public static Map<String,String[]> createTitleDataContent73(){
+        Map<String,String[]> map = new HashMap<>();
+        String[] arr1 = {"风速"};
+        String[] arr2 = {"转速"};
+        String[] arr3 = {"功率"};
+        map.put("风速(m/s)", arr1);
+        map.put("转速(rpm)", arr2);
+        map.put("功率(kw)", arr3);
+        return map;
+    }
+
+    public static List<Map<String,String>> createDataContent73(){
+        List<Map<String,String>> dataList = new ArrayList<>();
+        for (int i=0; i<10; i++){
+            Map<String,String> map = new HashMap<>();
+            map.put("机组编号", (i+1)+"#");
+            map.put("风速", "风速");
+            map.put("转速", "转速");
+            map.put("功率", "功率");
+            dataList.add(map);
+        }
+        return dataList;
+    }
+    public static Map<String,String[]> createTitleDataContent72(){
+        Map<String,String[]> map = new HashMap<>();
+        String[] arr1 = {"主轴前轴承","主轴后轴承"};
+        String[] arr2 = {"输入轴径向","输出轴径向"};
+        String[] arr3 = {"传动端径向","自由端径向"};
+        map.put("主轴承(℃)", arr1);
+        map.put("齿轮箱油温(℃)", arr2);
+        map.put("发电机(℃)", arr3);
+        return map;
+    }
+
+    public static List<Map<String,String>> createDataContent72(){
+        List<Map<String,String>> dataList = new ArrayList<>();
+        for (int i=0; i<10; i++){
+            Map<String,String> map = new HashMap<>();
+            map.put("机组编号", (i+1)+"#");
+            map.put("主轴前轴承", "主轴前轴承");
+            map.put("主轴后轴承", "主轴后轴承");
+            map.put("输入轴径向", "输入轴径向");
+            map.put("输出轴径向", "输出轴径向");
             map.put("传动端径向", "传动端径向");
             map.put("自由端径向", "自由端径向");
             dataList.add(map);
@@ -140,7 +194,7 @@ public class Docx4j2WordMain {
         return dataList;
     }
 
-    public static Map<String,String[]> createTitleDataContent7(){
+    public static Map<String,String[]> createTitleDataContent71(){
         Map<String,String[]> map = new HashMap<>();
         String[] arr1 = {"主轴承径向","主轴承径向2"};
         String[] arr2 = {"输入轴径向","行星齿轮径向","高速轴传动端轴承径向"};
@@ -151,7 +205,7 @@ public class Docx4j2WordMain {
         return map;
     }
 
-    public static List<Map<String,String>> createDataContent7(){
+    public static List<Map<String,String>> createDataContent71(){
         List<Map<String,String>> dataList = new ArrayList<>();
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
@@ -215,11 +269,11 @@ public class Docx4j2WordMain {
 
         Map<String,Object> map1 = new HashMap<>();
         map1.put("unit_name","01#机组");
-        String[] contents={"齿轮箱行星轮振动有效值较大时已达到0.7g（图1-1）；" ,
-                "齿轮箱行星轮包络谱中可以看到振动在太阳轮转频（1.875Hz）处较大，且存在多次谐频（图1-2）；" ,
-                "发电机自由端轴承振动有效值较大时已达到2.8g（图1-3）；" ,
-                "发电机自由端轴承振动时域波形中存在明显的冲击（图1-4）；" ,
-                "发电机自由端轴承包络谱图中振动在轴承内环故障频率（150Hz）处较大，且存在多次谐频（图1-5）。"};
+        String[] contents={"齿轮箱行星轮振动有效值较大时已达到0.7g（图1）；" ,
+                "齿轮箱行星轮包络谱中可以看到振动在太阳轮转频（1.875Hz）处较大，且存在多次谐频（图2）；" ,
+                "发电机自由端轴承振动有效值较大时已达到2.8g（图3）；" ,
+                "发电机自由端轴承振动时域波形中存在明显的冲击（图4）；" ,
+                "发电机自由端轴承包络谱图中振动在轴承内环故障频率（150Hz）处较大，且存在多次谐频（图5）。"};
         map1.put("contents",contents);
         map1.put("conclusions", new String[]{"齿轮箱行星轮系啮合不良；", "发电机自由端轴承严重磨损。"});
         String[] arr1 = {"图1-1 01#机组齿轮箱行星轮振动有效值趋势图", "F:/AutoExport/docx4j2/images/1.png"};

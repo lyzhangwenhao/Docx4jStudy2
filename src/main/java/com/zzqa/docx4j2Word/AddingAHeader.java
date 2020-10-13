@@ -88,6 +88,9 @@ public class AddingAHeader {
         Docx4jUtil.setFontSize(rPr,"20");
         Docx4jUtil.setFont(rPr, "黑体");
         Docx4jUtil.setFontColor(rPr, false, "#0070c0");
+        //设置斜体
+        BooleanDefaultTrue ltalic = new BooleanDefaultTrue();
+        rPr.setI(ltalic);
 
         run.getContent().add(rPr);
         for (int i=0;i<split.length;i++){

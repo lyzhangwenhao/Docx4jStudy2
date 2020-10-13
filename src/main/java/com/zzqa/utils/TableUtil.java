@@ -80,6 +80,81 @@ public class TableUtil {
     }
 
     /**
+     * Pagecontent4添加表格最后一行数据说明
+     * @param tc
+     * @param content
+     * @param width
+     * @param isBold
+     * @param fontSize
+     * @param fontColor
+     * @param backgroundcolor
+     */
+    public static void addP2Tc(Tc tc, String content, int width, boolean isBold, String fontSize, String fontColor, String backgroundcolor, boolean flag) {
+        P p = factory.createP();
+        R r = factory.createR();
+        RPr rPr = factory.createRPr();
+        Text text = factory.createText();
+        //禁止行号(不设置没什么影响)
+        BooleanDefaultTrue bCs = rPr.getBCs();
+        if (bCs == null) {
+            bCs = new BooleanDefaultTrue();
+        }
+        bCs.setVal(true);
+        rPr.setBCs(bCs);
+
+        //设置宽度
+        setCellWidth(tc, width);
+        //生成段落添加到单元格中
+        text.setValue(content);
+        //设置字体颜色，加粗
+        Docx4jUtil.setFontColor(rPr, isBold, fontColor);
+        //设置字体
+        Docx4jUtil.setFont(rPr, "宋体");
+        //设置字体大小
+        Docx4jUtil.setFontSize(rPr, fontSize);
+        //将样式添加到段落中
+        r.getContent().add(rPr);
+
+        r.getContent().add(text);
+        p.getContent().add(r);
+        tc.getContent().add(p);
+        //设置垂直居中
+        setTcVAlign(tc, STVerticalJc.CENTER);
+        PPr pPr = p.getPPr();
+        if (pPr==null){
+            pPr = factory.createPPr();
+        }
+        if (flag){
+            //缩进2字符
+            PPrBase.Ind ind = pPr.getInd();
+            if (ind==null){
+                ind = factory.createPPrBaseInd();
+            }
+            ind.setFirstLineChars(BigInteger.valueOf(200));
+            pPr.setInd(ind);
+        }
+        //设置水平居中
+//        setTcJcAlign(tc, JcEnumeration.CENTER);
+        //去除段后格式
+        Docx4jUtil.setSpacing(pPr);
+        if (backgroundcolor != null && !"".equals(backgroundcolor)) {
+            Docx4jUtil.setParagraphShdStyle(pPr, STShd.SOLID, backgroundcolor);
+        }
+        p.setPPr(pPr);
+
+
+//        if (backgroundcolor != null && !"".equals(backgroundcolor)) {
+//            //设置背景颜色
+//            CTShd shd = new CTShd();
+//            shd.setVal(STShd.CLEAR);
+//            shd.setColor("auto");
+//            shd.setFill(backgroundcolor);
+//            tc.getTcPr().setShd(shd);
+//        }
+
+    }
+
+    /**
      * 添加有序号的tc
      * @param tableRow
      * @param ps

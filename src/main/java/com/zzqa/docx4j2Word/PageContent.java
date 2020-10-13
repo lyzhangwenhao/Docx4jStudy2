@@ -3,9 +3,12 @@ package com.zzqa.docx4j2Word;
 import com.zzqa.utils.Docx4jUtil;
 import com.zzqa.utils.DrawChartPieUtil;
 import com.zzqa.utils.TableUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.relationships.Relationship;
 import org.docx4j.wml.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -25,6 +28,7 @@ public class PageContent {
 
     private ObjectFactory factory = new ObjectFactory();
 
+    private Logger logger = LoggerFactory.getLogger(PageContent.class);
     /**
      * 第一章节：项目描述
      */
@@ -52,12 +56,12 @@ public class PageContent {
                 byte[] pieImageBytes = Docx4jUtil.convertImageToByteArray(pieImage);
                 deleteImageFile(pieImage);
                 Docx4jUtil.addImageToPackage(wpMLPackage, pieImageBytes);
-
                 //TODO 删除输出语句
                 System.out.println("PageContent1 Success......");
 
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.error("PageContent1生成异常");
             }
         }
 
@@ -86,20 +90,25 @@ public class PageContent {
          * @param mapList
          */
         public void createPageContent(WordprocessingMLPackage wpMLPackage, List<Map<String, String>> mapList) {
-            //添加标题一：项目概述
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "2 测点安装及配置");
-            if (mapList == null || mapList.size() == 0) {
-                return;
+            try {
+                //添加标题一：项目概述
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "2 测点安装及配置");
+                if (mapList == null || mapList.size() == 0) {
+                    return;
+                }
+                Docx4jUtil.addParagraph(wpMLPackage, "各机组上安装有传感器" + mapList.size() + "个，各测点配置如下表所示：");
+                //创建一个表格
+                Tbl tbl = factory.createTbl();
+                //生成表头
+                createTalbeTitle(tbl);
+                //生成数据
+                createTableData(wpMLPackage, tbl, mapList);
+                //TODO 删除输出语句
+                System.out.println("PageContent2 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent2生成异常");
             }
-            Docx4jUtil.addParagraph(wpMLPackage, "各机组上安装有传感器" + mapList.size() + "个，各测点配置如下表所示：");
-            //创建一个表格
-            Tbl tbl = factory.createTbl();
-            //生成表头
-            createTalbeTitle(tbl);
-            //生成数据
-            createTableData(wpMLPackage, tbl, mapList);
-            //TODO 删除输出语句
-            System.out.println("PageContent2 Success......");
         }
 
 
@@ -114,10 +123,10 @@ public class PageContent {
             Tr dataTr = null;
             for (Map<String, String> map : mapList) {
                 dataTr = factory.createTr();
-                TableUtil.addTableTc(dataTr, map.get("id"), 1000, false, "20", "black", null);
-                TableUtil.addTableTc(dataTr, map.get("location"), 3000, false, "20", "black", null);
-                TableUtil.addTableTc(dataTr, map.get("direction"), 1500, false, "20", "black", null);
-                TableUtil.addTableTc(dataTr, map.get("type"), 3000, false, "20", "black", null);
+                TableUtil.addTableTc(dataTr, map.get("id"), 1000, false, "22", "black", null);
+                TableUtil.addTableTc(dataTr, map.get("location"), 3000, false, "22", "black", null);
+                TableUtil.addTableTc(dataTr, map.get("direction"), 1500, false, "22", "black", null);
+                TableUtil.addTableTc(dataTr, map.get("type"), 3000, false, "22", "black", null);
                 tbl.getContent().add(dataTr);
             }
             wpMLPackage.getMainDocumentPart().addObject(tbl);
@@ -155,21 +164,28 @@ public class PageContent {
     class PageContent3 {
 
         public void createPageContent(WordprocessingMLPackage wpMLPackage, List<Map<String, String>> dataList) {
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "3 评估标准");
-            Docx4jUtil.addParagraph(wpMLPackage, "本报告根据《VDI3834风力发电机组振动控制标准》，并结合现场机组整体运行情况对机组运行状况进行评估，各测点振动报警值如下表所示：");
-            //创建一个表格
-            Tbl tbl = factory.createTbl();
-            //设置表格样式
-            setStyle(tbl);
-            //生成表头
-            createTalbeTitle(tbl);
-            //数据
-            createTableData(tbl, dataList);
+            try {
 
-            //将表格添加到wpMlPackage中
-            wpMLPackage.getMainDocumentPart().addObject(tbl);
-            //TODO 删
-            System.out.println("PageContent3 Success......");
+
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "3 评估标准");
+                Docx4jUtil.addParagraph(wpMLPackage, "本报告根据《VDI3834风力发电机组振动控制标准》，并结合现场机组整体运行情况对机组运行状况进行评估，各测点振动报警值如下表所示：");
+                //创建一个表格
+                Tbl tbl = factory.createTbl();
+                //设置表格样式
+                setStyle(tbl);
+                //生成表头
+                createTalbeTitle(tbl);
+                //数据
+                createTableData(tbl, dataList);
+
+                //将表格添加到wpMlPackage中
+                wpMLPackage.getMainDocumentPart().addObject(tbl);
+                //TODO 删
+                System.out.println("PageContent3 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent3生成异常");
+            }
         }
 
         private void createTableData(Tbl tbl, List<Map<String, String>> dataList) {
@@ -238,13 +254,167 @@ public class PageContent {
     class PageContent4 {
 
         public void createPageContent(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList) {
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "4 分析结论");
-            Docx4jUtil.addParagraph(wpMLPackage, "评估依据：结合当前风况和CS2000振动监测系统所测得振动数据，以及时域波形图、频谱图、包络谱图、趋势图。");
-            //创建一个表格
-            createTable(wpMLPackage, mapTitle, dataList);
-            //TODO 删
-            System.out.println("PageContent7 Success......");
+            try {
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "4 分析结论");
+                Docx4jUtil.addParagraph(wpMLPackage, "评估依据：结合当前风况和CS2000振动监测系统所测得振动数据，以及时域波形图、频谱图、包络谱图、趋势图。");
+                //创建一个表格
+                createTable(wpMLPackage, mapTitle, dataList, 1000);
+                //TODO 删
+                System.out.println("PageContent4 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent4生成异常");
+            }
         }
+        private void createTable(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList ,int numberIdWidth) {
+            Tbl tbl = factory.createTbl();
+            //将表格添加到wpMlPackage中
+            wpMLPackage.getMainDocumentPart().addObject(tbl);
+            //设置样式
+            setStyle(tbl);
+            //生成表头
+            Tr titleTr1 = factory.createTr();
+            Tr titleTr2 = factory.createTr();
+            tbl.getContent().add(titleTr1);
+            tbl.getContent().add(titleTr2);
+            //机组编号列固定不变，其他标题动态生成
+            TableUtil.addTableTc(titleTr1, "机组编号", numberIdWidth, true, "22", "black", "#4bacc6");//该单元格固定
+            TableUtil.addTableTc(titleTr2, "机组编号", numberIdWidth, true, "22", "black", "#4bacc6");//该单元格固定
+            //合并
+            TableUtil.mergeCellsVertically(tbl, 0, 0, 1);
+            Set<Map.Entry<String, String[]>> entries = mapTitle.entrySet();
+            //控制第一行合并起始
+            int start = 1;
+            //记录标题所在位置，后面插入数据时根据该位置将数据插入到对应的标题列下面
+            Map<Integer, String> titlePosition = new HashMap<>();
+            Integer index = 2;  //除去编号，从第2列开始
+            for (Map.Entry<String, String[]> entry : entries) {
+                if (entry == null) {
+                    continue;
+                }
+                String key = entry.getKey();
+                String[] value = entry.getValue();
+                if (value == null || value.length < 1) {
+                    continue;
+                }
+                //控制单元格宽度
+                int width = 700;
+                if ("分析结论".equals(key)){
+                    width = 4500;
+                }
+                for (String s : value) {
+                    //添加第一行标题
+                    TableUtil.addTableTc(titleTr1, key, width, true, "22", "black", "#4bacc6");
+                    //添加第二行标题
+                    TableUtil.addTableTc(titleTr2, s, width, true, "22", "black", "#4bacc6");
+                    //如果行标题跟第二行名称相同且第二行标题只有一个，则对标题进行合并
+                    if (key != null && key.equals(s) && value.length==1) {
+                        TableUtil.mergeCellsVertically(tbl, index - 1, 0, 1);
+                    }
+                    //存储标题位置
+                    titlePosition.put(index, s);
+                    index++;
+                }
+                //合并
+                TableUtil.mergeCellsHorizontal(tbl, 0, start, start + value.length);
+                start += value.length;
+            }
+            //下面插入数据部分
+            if (dataList == null || dataList.size() == 0) {
+                return;
+            }
+            for (Map<String, String> map : dataList) {
+                if (map == null || map.size() == 0) {
+                    continue;
+                }
+                Tr tr = factory.createTr();
+                TableUtil.addTableTc(tr, (map.get("机组编号") != null && !"".equals(map.get("机组编号")) ? map.get("机组编号") : "\\"), numberIdWidth, true, "22", "#000000", null);
+                for (int i = 0; i < titlePosition.size(); i++) {//根据位置插入相应的数据
+                    String titleName = titlePosition.get(i + 2);
+                    int width = 1500;
+                    String fontSize = "22";
+                    if ("分析结论".equals(titleName)){
+                        width = 4500;
+                        fontSize = "21";
+                    }
+                    String content = map.get(titleName);
+                    String backgroundColor = null;
+                    if ("正常".equals(content)){
+                        width = 500;
+                        backgroundColor = "#00ff00";
+                    }else if ("注意".equals(content)){
+                        width = 500;
+                        backgroundColor = "#00ffff";
+                    }else if ("警告".equals(content)){
+                        width = 500;
+                        backgroundColor = "#ffff00";
+                    }else if ("报警".equals(content)){
+                        width = 500;
+                        backgroundColor = "#ff00ff";
+                    }else if ("危险".equals(content)){
+                        width = 500;
+                        backgroundColor = "#c60000";
+                    }
+                    TableUtil.addTableTc(tr, (content != null && !"".equals(map.get(titlePosition.get(i + 2)))) ? content : "\\", width, false, fontSize, "#000000", backgroundColor);
+                }
+                tbl.getContent().add(tr);
+            }
+            //在最后一行添加故障说明
+            Tr tr = factory.createTr();
+            Tc tc = factory.createTc();
+
+            TableUtil.addP2Tc(tc, "备注：故障等级说明", 0, false, "22", "#000000", null,false);
+            TableUtil.addP2Tc(tc, "正常：", 0, false, "22", "#000000", "#00ff00",false);
+            TableUtil.addP2Tc(tc, "运行状态处于正常状态，机组可照常运行；", 2000, false, "22", "#000000", null,true);
+            TableUtil.addP2Tc(tc, "注意：", 0, false, "22", "#000000", "#00ffff",false);
+            TableUtil.addP2Tc(tc, "机组存在早期故障特征，可照常运行，应关注机组运行状况，加强日常检查和维护；", 2000, false, "22", "#000000", null,true);
+            TableUtil.addP2Tc(tc, "警告：", 0, false, "22", "#000000", "#ffff00",false);
+            TableUtil.addP2Tc(tc, "机组存在较明显的故障特征，机组可继续运行，现场维护人员需在2个月内检查确认故障，择机进行维修措施；", 2000, false, "22", "#000000", null,true);
+            TableUtil.addP2Tc(tc, "报警：", 0, false, "22", "#000000", "#ff00ff",false);
+            TableUtil.addP2Tc(tc, "机组故障特征明显，故障处于劣化期，现场维护人员需在2周内检查确认故障，择机进行维修措施；", 2000, false, "22", "#000000", null,true);
+            TableUtil.addP2Tc(tc, "危险：", 0, false, "22", "#000000", "#c60000",false);
+            TableUtil.addP2Tc(tc, "机组故障严重，须立即停机进行检查，采取维修措施。", 2000, false, "22", "#000000", null,true);
+
+//            TableUtil.addTableTc(tr, "", 1500, false, "22", "#000000", null);
+            tr.getContent().add(tc);
+            for (int i=0; i<titlePosition.size(); i++){
+                TableUtil.addTableTc(tr, "", 0, false, "22", "#000000", null);
+            }
+            tbl.getContent().add(tr);
+            TableUtil.mergeCellsHorizontal(tbl, dataList.size()+2, 0, titlePosition.size()+1);
+
+            /*Tr tr1 = factory.createTr();
+            TableUtil.addTableTc(tr1, "备注", 500, true, "22", "black", null);
+            TableUtil.addTableTc(tr1, "故障等级说明", 500, false, "22", "#000000", null);
+
+            Tr tr2 = factory.createTr();
+            TableUtil.addTableTc(tr2, "正常：", 8000, false, "22", "#000000", "#00ff00");
+            TableUtil.addTableTc(tr2, "运行状态处于正常状态，机组可照常运行；", 8000, false, "22", "#000000", null);
+
+            Tr tr3 = factory.createTr();
+            TableUtil.addTableTc(tr3, "注意：", 8000, false, "22", "#000000", "#00ffff");
+            TableUtil.addTableTc(tr3, "机组存在早期故障特征，可照常运行，应关注机组运行状况，加强日常检查和维护；", 8000, false, "22", "#000000", null);
+
+            Tr tr4 = factory.createTr();
+            TableUtil.addTableTc(tr4, "警告：", 8000, false, "22", "#000000", "#ffff00");
+            TableUtil.addTableTc(tr4, "机组存在较明显的故障特征，机组可继续运行，现场维护人员需在2个月内检查确认故障，择机进行维修措施；", 8000, false, "22", "#000000", null);
+
+            Tr tr5 = factory.createTr();
+            TableUtil.addTableTc(tr5, "报警：", 8000, false, "22", "#000000", "#ff00ff");
+            TableUtil.addTableTc(tr5, "机组故障特征明显，故障处于劣化期，现场维护人员需在2周内检查确认故障，择机进行维修措施；", 8000, false, "22", "#000000", null);
+
+            Tr tr6 = factory.createTr();
+            TableUtil.addTableTc(tr6, "危险：", 8000, false, "22", "#000000", "#c60000");
+            TableUtil.addTableTc(tr6, "机组故障严重，须立即停机进行检查，采取维修措施。", 8000, false, "22", "#000000", null);
+
+            tbl.getContent().add(tr1);
+            tbl.getContent().add(tr2);
+            tbl.getContent().add(tr3);
+            tbl.getContent().add(tr4);
+            tbl.getContent().add(tr5);
+            tbl.getContent().add(tr6);*/
+        }
+
     }
 
     /**
@@ -255,27 +425,32 @@ public class PageContent {
         private long restart = 1;
 
         public void createPageContent(WordprocessingMLPackage wpMLPackage, String reportName, List<Map<String, Object>> list, NumberingCreate numberingCreate) {
-            if (numberingCreate == null) {
-                this.numberingCreate = new NumberingCreate(wpMLPackage);
-            } else {
-                this.numberingCreate = numberingCreate;
+            try {
+                if (numberingCreate == null) {
+                    this.numberingCreate = new NumberingCreate(wpMLPackage);
+                } else {
+                    this.numberingCreate = numberingCreate;
+                }
+                //"の"
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "5 处理建议");
+                if (list == null || list.size() == 0) {
+                    return;
+                }
+                Tbl tbl = factory.createTbl();
+                //设置表格样式
+                setStyle(tbl);
+                //创建表头
+                createTblTitle(tbl, reportName);
+                //添加数据
+                createTblData(tbl, list);
+                //将表格添加到文档中
+                wpMLPackage.getMainDocumentPart().addObject(tbl);
+                //TODO 删
+                System.out.println("PageContent5 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent5生成异常");
             }
-            //"の"
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "5 处理建议");
-            if (list == null || list.size() == 0) {
-                return;
-            }
-            Tbl tbl = factory.createTbl();
-            //设置表格样式
-            setStyle(tbl);
-            //创建表头
-            createTblTitle(tbl,reportName);
-            //添加数据
-            createTblData(tbl, list);
-            //将表格添加到文档中
-            wpMLPackage.getMainDocumentPart().addObject(tbl);
-            //TODO 删
-            System.out.println("PageContent5 Success......");
         }
 
         /**
@@ -358,79 +533,109 @@ public class PageContent {
         private long restart = 1;
 
         public void createPageContent(WordprocessingMLPackage wpMLPackage, List<Map<String, Object>> dataList, NumberingCreate numberingCreate) {
-            if (numberingCreate == null) {
-                this.numberingCreate = new NumberingCreate(wpMLPackage);
-            } else {
-                this.numberingCreate = numberingCreate;
-            }
-            if (dataList == null || dataList.size() == 0) {
-                return;
-            }
-
-            int num = 1;
-
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "6 故障机组详细分析");
-            for (Map<String, Object> data : dataList) {
-
-//            if (restart != 1) {
-                restart = numberingCreate.restart(restart, 0, 1);
-//            }
-                if (data == null || data.get("unit_name") == null) {   //如果机组名称为空，则继续下一个
-                    continue;
+            try {
+                if (numberingCreate == null) {
+                    this.numberingCreate = new NumberingCreate(wpMLPackage);
+                } else {
+                    this.numberingCreate = numberingCreate;
                 }
-                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading2", "6." + num + " " + data.get("unit_name"));
+                if (dataList == null || dataList.size() == 0) {
+                    return;
+                }
 
-                Docx4jUtil.addParagraph(wpMLPackage, "我们对" + data.get("unit_name") + "的运行情况通过远程浏览的方式进行了连续的跟踪监测。发现：");
+                int num = 1;
+
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "6 故障机组详细分析");
+                int index = 0;
+                for (Map<String, Object> data : dataList) {
+                    index++;
+//            if (restart != 1) {
+                    restart = numberingCreate.restart(restart, 0, 1);
+//            }
+                    if (data == null || data.get("unit_name") == null) {   //如果机组名称为空，则继续下一个
+                        continue;
+                    }
+                    wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading2", "6." + num + " " + data.get("unit_name"));
+
+                    Docx4jUtil.addParagraph(wpMLPackage, "我们对" + data.get("unit_name") + "的运行情况通过远程浏览的方式进行了连续的跟踪监测。发现：");
 
 //            numberingCreate.createNumberedParagraph(1, 0, )
-                String[] contents = (String[]) data.get("contents");
+                    String[] contents = (String[]) data.get("contents");
 
-                //发现的情况
-                if (contents != null && contents.length > 0) {
-                    for (String content : contents) {
-                        P p = numberingCreate.createNumberedParagraph(restart, 0, content, 100);
-                        //设置段落背景颜色
-                        PPr pPr = p.getPPr();
-                        Docx4jUtil.setParagraphShdStyle(pPr, STShd.PCT_20, "#55ff55");
-                        p.setPPr(pPr);
-                        wpMLPackage.getMainDocumentPart().addObject(p);
-                    }
-                }
-                //结论
-                restart = numberingCreate.restart(restart, 0, 1);
-                Docx4jUtil.addParagraph(wpMLPackage, "结论：");
-                String[] conclusions = (String[]) data.get("conclusions");
-                if (conclusions != null && conclusions.length > 0) {
-                    for (String conclusion : conclusions) {
-                        P p = numberingCreate.createNumberedParagraph(restart, 1, conclusion, 100);
-                        PPr pPr = p.getPPr();
-                        Docx4jUtil.setParagraphShdStyle(pPr, STShd.PCT_20, "#55ff55");
-                        wpMLPackage.getMainDocumentPart().addObject(p);
-                    }
-                }
-                //图片
-                List<String[]> imageList = (List<String[]>) data.get("imageList");
-                if (imageList != null && imageList.size() != 0) {
-                    for (String[] strings : imageList) {
-                        if (strings == null && strings.length < 2) {
-                            continue;
-                        }
-                        String title = strings[0];
-                        String imagePath = strings[1];
-                        File file = new File(imagePath);
-                        byte[] bytes = Docx4jUtil.convertImageToByteArray(file);
-                        if (bytes == null) {
-                            continue;
-                        }
-                        Docx4jUtil.addImageToPackage(wpMLPackage, bytes);
-                        Docx4jUtil.addTableTitle(wpMLPackage, title);
-                    }
+                    //发现的情况
+                    if (contents != null && contents.length > 0) {
+                        for (String content : contents) {
+                            int length = content.length();
+                            if (content == null || length == 0) {
+                                continue;
+                            }
+                            //定义要传的字符串
+                            String parameter = null;
+                            //操作（图x）格式为（图x-y）
+                            int startIndex = content.lastIndexOf("（图") != -1 ? content.lastIndexOf("（图") : content.lastIndexOf("(图");
+                            int endIndex = content.lastIndexOf("）") != -1 ? content.lastIndexOf("）") : content.lastIndexOf(")");
+                            if (startIndex == -1 || endIndex == -1 || (startIndex + 2) > length - 1) {
+                                parameter = content;
+                            } else {
+                                String substring = content.substring(startIndex + 2, endIndex);
+                                boolean numeric = StringUtils.isNumeric(substring);
+                                if (!numeric) {  //如果获取到的不是一个数字类型，说明可能手动添加了类似于4-1这种格式，不再进行操作
+                                    parameter = content;
+                                } else {
+//                                    substring = "6-"+index+"-"+substring;
+//                                    System.out.println(content.indexOf("图"+substring));
+                                    parameter = content.replace("图" + substring, "图" + "6-"+index+"-"+substring);
+                                }
+                            }
 
+
+                            P p = numberingCreate.createNumberedParagraph(restart, 0, parameter, 100);
+                            //设置段落背景颜色
+                            PPr pPr = p.getPPr();
+                            Docx4jUtil.setParagraphShdStyle(pPr, STShd.PCT_20, "#55ff55");
+                            p.setPPr(pPr);
+                            wpMLPackage.getMainDocumentPart().addObject(p);
+                        }
+                    }
+                    //结论
+                    restart = numberingCreate.restart(restart, 0, 1);
+                    Docx4jUtil.addParagraph(wpMLPackage, "结论：");
+                    String[] conclusions = (String[]) data.get("conclusions");
+                    if (conclusions != null && conclusions.length > 0) {
+                        for (String conclusion : conclusions) {
+                            P p = numberingCreate.createNumberedParagraph(restart, 1, conclusion, 100);
+                            PPr pPr = p.getPPr();
+                            Docx4jUtil.setParagraphShdStyle(pPr, STShd.PCT_20, "#55ff55");
+                            wpMLPackage.getMainDocumentPart().addObject(p);
+                        }
+                    }
+                    //图片
+                    List<String[]> imageList = (List<String[]>) data.get("imageList");
+                    if (imageList != null && imageList.size() != 0) {
+                        for (String[] strings : imageList) {
+                            if (strings == null && strings.length < 2) {
+                                continue;
+                            }
+                            String title = strings[0];
+                            String imagePath = strings[1];
+                            File file = new File(imagePath);
+                            byte[] bytes = Docx4jUtil.convertImageToByteArray(file);
+                            if (bytes == null) {
+                                continue;
+                            }
+                            Docx4jUtil.addImageToPackage(wpMLPackage, bytes);
+                            Docx4jUtil.addTableTitle(wpMLPackage, title);
+                        }
+
+                    }
+                    num++;
                 }
-                num++;
+                //TODO 删
+                System.out.println("PageContent6 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent6生成异常");
             }
-            //TODO 删
-            System.out.println("PageContent6 Success......");
 
         }
     }
@@ -440,12 +645,67 @@ public class PageContent {
      */
     class PageContent7 {
 
-        public void createPageContent(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList) {
-            wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "7 正常机组数据");
-            //创建一个表格
-            createTable(wpMLPackage, mapTitle, dataList);
-            //TODO 删
-            System.out.println("PageContent7 Success......");
+        public void createPageContent(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle1, List<Map<String, String>> dataList1
+                , Map<String, String[]> mapTitle2, List<Map<String, String>> dataList2, Map<String, String[]> mapTitle3, List<Map<String, String>> dataList3) {
+            try {
+                wpMLPackage.getMainDocumentPart().addStyledParagraphOfText("Heading1", "7 正常机组数据");
+                //创建第一个表格
+                createTable(wpMLPackage, mapTitle1, dataList1, 1500);
+                Docx4jUtil.addBr(wpMLPackage, 2);   //分割表格
+                //创建第二个表格
+                createTable(wpMLPackage, mapTitle2, dataList2, 1000);
+                Docx4jUtil.addBr(wpMLPackage, 2);
+                //创建第三个表格
+                createTable3(wpMLPackage, mapTitle3, dataList3, 50);
+                //TODO 删
+                System.out.println("PageContent7 Success......");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("PageContent7生成异常");
+            }
+        }
+        private void createTable3(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList ,int numberIdWidth) {
+            Tbl tbl = factory.createTbl();
+            //将表格添加到wpMlPackage中
+            wpMLPackage.getMainDocumentPart().addObject(tbl);
+            //设置样式
+            setStyle(tbl);
+            //生成表头
+            Tr titleTr = factory.createTr();
+            tbl.getContent().add(titleTr);
+            //机组编号列固定不变，其他标题动态生成
+            TableUtil.addTableTc(titleTr, "机组编号", numberIdWidth, true, "22", "white", "#8064a2");//该单元格固定
+            Set<Map.Entry<String, String[]>> entries = mapTitle.entrySet();
+            //控制第一行合并起始
+            int start = 1;
+            //记录标题所在位置，后面插入数据时根据该位置将数据插入到对应的标题列下面
+            Map<Integer, String> titlePosition = new HashMap<>();
+            Integer index = 2;  //除去编号，从第2列开始
+
+            TableUtil.addTableTc(titleTr, "风速(m/s)", 2500, true, "22", "white", "#8064a2");
+            titlePosition.put(index++, "风速");
+
+            TableUtil.addTableTc(titleTr, "转速(rpm)", 2500, true, "22", "white", "#8064a2");
+            titlePosition.put(index++, "转速");
+
+            TableUtil.addTableTc(titleTr, "功率(kw)", 2500, true, "22", "white", "#8064a2");
+            titlePosition.put(index++, "功率");
+
+            //下面插入数据部分
+            if (dataList == null || dataList.size() == 0) {
+                return;
+            }
+            for (Map<String, String> map : dataList) {
+                if (map == null || map.size() == 0) {
+                    continue;
+                }
+                Tr tr = factory.createTr();
+                TableUtil.addTableTc(tr, (map.get("机组编号") != null && !"".equals(map.get("机组编号")) ? map.get("机组编号") : "\\"), 2000, true, "22", "#000000", null);
+                for (int i = 0; i < titlePosition.size(); i++) {//根据位置插入相应的数据
+                    TableUtil.addTableTc(tr, (map.get(titlePosition.get(i + 2)) != null && !"".equals(map.get(titlePosition.get(i + 2)))) ? map.get(titlePosition.get(i + 2)) : "\\", 2500, false, "22", "#000000", null);
+                }
+                tbl.getContent().add(tr);
+            }
         }
     }
 
@@ -489,6 +749,7 @@ public class PageContent {
                 System.out.println("PageContent8 Success......");
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.error("PageContent8生成异常");
             }
         }
 
@@ -561,7 +822,7 @@ public class PageContent {
         }
     }
 
-    private void createTable(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList) {
+    private void createTable(WordprocessingMLPackage wpMLPackage, Map<String, String[]> mapTitle, List<Map<String, String>> dataList ,int numberIdWidth) {
         Tbl tbl = factory.createTbl();
         //将表格添加到wpMlPackage中
         wpMLPackage.getMainDocumentPart().addObject(tbl);
@@ -572,9 +833,10 @@ public class PageContent {
         Tr titleTr2 = factory.createTr();
         tbl.getContent().add(titleTr1);
         tbl.getContent().add(titleTr2);
+        String color = "#8064a2";
         //机组编号列固定不变，其他标题动态生成
-        TableUtil.addTableTc(titleTr1, "机组编号", 1500, true, "22", "black", null);//该单元格固定
-        TableUtil.addTableTc(titleTr2, "机组编号", 1500, true, "22", "black", null);//该单元格固定
+        TableUtil.addTableTc(titleTr1, "机组编号", numberIdWidth, true, "22", "white", color);//该单元格固定
+        TableUtil.addTableTc(titleTr2, "机组编号", numberIdWidth, true, "22", "white", color);//该单元格固定
         //合并
         TableUtil.mergeCellsVertically(tbl, 0, 0, 1);
         Set<Map.Entry<String, String[]>> entries = mapTitle.entrySet();
@@ -594,9 +856,9 @@ public class PageContent {
             }
             for (String s : value) {
                 //添加第一行标题
-                TableUtil.addTableTc(titleTr1, key, 1500, true, "22", "black", null);
+                TableUtil.addTableTc(titleTr1, key, 2500, true, "22", "white", color);
                 //添加第二行标题
-                TableUtil.addTableTc(titleTr2, s, 1500, true, "22", "black", null);
+                TableUtil.addTableTc(titleTr2, s, 2500, true, "22", "white", color);
                 //如果行标题跟第二行名称相同，则对标题进行合并
                 if (key != null && key.equals(s)) {
                     TableUtil.mergeCellsVertically(tbl, index - 1, 0, 1);
@@ -618,9 +880,9 @@ public class PageContent {
                 continue;
             }
             Tr tr = factory.createTr();
-            TableUtil.addTableTc(tr, (map.get("机组编号") != null && !"".equals(map.get("机组编号")) ? map.get("机组编号") : "\\"), 2500, true, "22", "#000000", null);
+            TableUtil.addTableTc(tr, (map.get("机组编号") != null && !"".equals(map.get("机组编号")) ? map.get("机组编号") : "\\"), 2000, true, "22", "#000000", null);
             for (int i = 0; i < titlePosition.size(); i++) {//根据位置插入相应的数据
-                TableUtil.addTableTc(tr, (map.get(titlePosition.get(i + 2)) != null && !"".equals(map.get(titlePosition.get(i + 2)))) ? map.get(titlePosition.get(i + 2)) : "\\", 1500, false, "22", "#000000", null);
+                TableUtil.addTableTc(tr, (map.get(titlePosition.get(i + 2)) != null && !"".equals(map.get(titlePosition.get(i + 2)))) ? map.get(titlePosition.get(i + 2)) : "\\", 2500, false, "22", "#000000", null);
             }
             tbl.getContent().add(tr);
         }
