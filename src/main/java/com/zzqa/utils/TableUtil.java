@@ -1,5 +1,6 @@
 package com.zzqa.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
@@ -25,7 +26,7 @@ public class TableUtil {
      * @param tableRow
      * @param content
      */
-    public static void addTableTc(Tr tableRow, String content, int width, boolean isBold, String fontSize, String fontColor, String backgroundcolor) {
+    public static void addTableTc(Tr tableRow, String content, Integer width, boolean isBold, String fontSize, String fontColor, String backgroundcolor) {
         Tc tc = factory.createTc();
         P p = factory.createP();
         R r = factory.createR();
@@ -40,7 +41,9 @@ public class TableUtil {
         rPr.setBCs(bCs);
 
         //设置宽度
-        setCellWidth(tc, width);
+        if (width!=-1){
+            setCellWidth(tc, width);
+        }
         //生成段落添加到单元格中
         text.setValue(content);
         //设置字体颜色，加粗
@@ -103,7 +106,10 @@ public class TableUtil {
         rPr.setBCs(bCs);
 
         //设置宽度
-        setCellWidth(tc, width);
+        if (width!=-1){
+            setCellWidth(tc, width);
+        }
+
         //生成段落添加到单元格中
         text.setValue(content);
         //设置字体颜色，加粗
@@ -295,6 +301,29 @@ public class TableUtil {
         }
     }
 
+    private static TblPr getTblPr(Tbl tbl) {
+        TblPr tblPr = tbl.getTblPr();
+        if (tblPr == null) {
+            tblPr = new TblPr();
+            tbl.setTblPr(tblPr);
+        }
+        return tblPr;
+    }
+    /**
+     * @Description: 设置表格总宽度
+     */
+    public static void setTableWidth(Tbl tbl, String width) {
+        if (StringUtils.isNotBlank(width)) {
+            TblPr tblPr = getTblPr(tbl);
+            TblWidth tblW = tblPr.getTblW();
+            if (tblW == null) {
+                tblW = new TblWidth();
+                tblPr.setTblW(tblW);
+            }
+            tblW.setW(new BigInteger(width));
+            tblW.setType("dxa");
+        }
+    }
 
     /**
      * 本方法创建一个单元格属性集对象和一个表格宽度对象. 将给定的宽度设置到宽度对象然后将其添加到

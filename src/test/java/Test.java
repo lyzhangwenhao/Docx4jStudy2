@@ -49,4 +49,9 @@ public class Test {
         Desktop desktop = Desktop.getDesktop();
         desktop.browse(URI.create("https://www.baidu.com"));
     }
+    @org.junit.Test
+    public void test3(){
+        System.out.println(5/3);
+        System.out.println((Integer)(5/3));
+    }
 }

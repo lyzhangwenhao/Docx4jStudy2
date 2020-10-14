@@ -43,11 +43,12 @@ public class Docx4j2WordMain {
             List<Map<String,String>> mapList = createData();
             //PageContent3数据准备
             List<Map<String, String>> dataContent3 = createDataContent3();
+            Map<String, String[]> titleDataContent3 = createTitleDataContent3();
             //Pagecontent4数据准备
             Map<String, String[]> titleDataContent4 = createTitleDataContent4();
             List<Map<String, String>> dataContent4 = createDataContent4();
             //PageContent5数据准备
-            List<Map<String, Object>> dataContent5 = createDataContent5();
+            Map<String, String[]> dataContent5 = createDataContent5();
             //PageContent6数据准备
             List<Map<String,Object>> dataContent6 = createDataContent6();
             //Pagecontent7数据准备
@@ -73,7 +74,7 @@ public class Docx4j2WordMain {
             pageContent2.createPageContent(wpMLPackage, mapList);
             //第三章节：评估标准
             PageContent.PageContent3 pageContent3 = pageContent.new PageContent3();
-            pageContent3.createPageContent(wpMLPackage,dataContent3);
+            pageContent3.createPageContent(wpMLPackage,titleDataContent3,dataContent3);
             //新建创建序号对象
             NumberingCreate numberingCreate = new NumberingCreate(wpMLPackage);
             //使用原序号
@@ -137,6 +138,7 @@ public class Docx4j2WordMain {
             map.put("主轴承", arr[random.nextInt(5)]);
             map.put("齿轮箱", arr[random.nextInt(5)]);
             map.put("发电机", arr[random.nextInt(5)]);
+//            map.put("发电机2", arr[random.nextInt(5)]);
             map.put("分析结论", "1.齿轮箱行星轮系可能存在啮合不良；\n" +
                     "2.发电机自由端轴承严重磨损。\n");
             map.put("与上季度振动趋势对比", "基本不变。");
@@ -160,9 +162,9 @@ public class Docx4j2WordMain {
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
             map.put("机组编号", (i+1)+"#");
-            map.put("风速", "风速");
-            map.put("转速", "转速");
-            map.put("功率", "功率");
+            map.put("风速", "50");
+            map.put("转速", "49");
+            map.put("功率", "200");
             dataList.add(map);
         }
         return dataList;
@@ -183,12 +185,12 @@ public class Docx4j2WordMain {
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
             map.put("机组编号", (i+1)+"#");
-            map.put("主轴前轴承", "主轴前轴承");
-            map.put("主轴后轴承", "主轴后轴承");
-            map.put("输入轴径向", "输入轴径向");
-            map.put("输出轴径向", "输出轴径向");
-            map.put("传动端径向", "传动端径向");
-            map.put("自由端径向", "自由端径向");
+            map.put("主轴前轴承", "50");
+            map.put("主轴后轴承", "50");
+            map.put("输入轴径向", "50");
+            map.put("输出轴径向", "");
+            map.put("传动端径向", "50");
+            map.put("自由端径向", "50");
             dataList.add(map);
         }
         return dataList;
@@ -196,9 +198,9 @@ public class Docx4j2WordMain {
 
     public static Map<String,String[]> createTitleDataContent71(){
         Map<String,String[]> map = new HashMap<>();
-        String[] arr1 = {"主轴承径向","主轴承径向2"};
-        String[] arr2 = {"输入轴径向","行星齿轮径向","高速轴传动端轴承径向"};
-        String[] arr3 = {"传动端径向","自由端径向"};
+        String[] arr1 = {"主轴承径向","主轴承轴向"};
+        String[] arr2 = {"齿轮箱输入轴径向","齿轮箱高速轴径向8K", "齿轮箱内齿圈径向", "齿轮箱中间轴轴向", "齿轮箱高速轴径向"};
+        String[] arr3 = {"发电机前轴承径向", "发电机后轴承径向", "发电机前轴承径向8K", "发电机后轴承径向8K"};
         map.put("主轴承(g)", arr1);
         map.put("齿轮箱(g)", arr2);
         map.put("发电机(g)", arr3);
@@ -210,58 +212,63 @@ public class Docx4j2WordMain {
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
             map.put("机组编号", (i+1)+"#");
-            map.put("主轴承径向", "主轴承径向");
-            map.put("输入轴径向", "输入轴径向");
-            map.put("行星齿轮径向", "行星齿轮径向");
-            map.put("高速轴传动端轴承径向", "");
-            map.put("输入轴径向", "输入轴径向");
-            map.put("传动端径向", "传动端径向");
-            map.put("自由端径向", "自由端径向");
+            map.put("主轴承径向", "0.0199242");
+            map.put("主轴承轴向", "0.0218212");
+            map.put("齿轮箱输入轴径向", " 0.0876583");
+            map.put("齿轮箱高速轴径向8K", "0.332858");
+            map.put("齿轮箱内齿圈径向", "0.098552");
+            map.put("齿轮箱中间轴轴向", "0.216615");
+            map.put("齿轮箱高速轴径向", "0.316997");
+            map.put("发电机前轴承径向", " 0.146045");
+            map.put("发电机后轴承径向", "0.100776");
+            map.put("发电机前轴承径向8K", "0.716748");
+            map.put("发电机后轴承径向8K", "0.806349");
             dataList.add(map);
         }
         return dataList;
     }
-
+    public static Map<String,String[]> createTitleDataContent3(){
+        Map<String,String[]> map = new HashMap<>();
+        String[] arr1 = {"主轴承"};
+//        String[] arr2 = {"内齿圈","中间轴","高速轴"};;
+        String[] arr2 = {"内齿圈","中间轴","高速轴","齿轮箱输入轴径向","齿轮箱高速轴径向8K", "齿轮箱内齿圈径向"};
+        String[] arr3 = {"发电机轴承"};
+        map.put("主轴承", arr1);
+        map.put("齿轮箱", arr2);
+        map.put("发电机轴承", arr3);
+        return map;
+    }
     public static List<Map<String,String>> createDataContent3(){
         List<Map<String,String>> dataList = new ArrayList<>();
         for (int i=0; i<10; i++){
             Map<String,String> map = new HashMap<>();
-            map.put("主轴承1", "3.0/-1.0");
-//            map.put("主轴承2", "3.0/-1.0");
-            map.put("齿轮箱输入轴", "3.0/-1.0");
-            map.put("齿轮箱二级齿圈", "3.0/-1.0");
-            map.put("齿轮箱输出轴", "");
-            map.put("发电机前轴承", "3.0/-1.0");
+            map.put("组件", "评估加速度(g)");
+            map.put("主轴承", "3.0/-1.0");
+            map.put("内齿圈", "3.0/-1.0");
+            map.put("中间轴", "3.0/-1.0");
+            map.put("高速轴", "");
+            map.put("齿轮箱输入轴径向", " 3.0/-1.0");
+            map.put("齿轮箱高速轴径向8K", "3.0/-1.0");
+            map.put("齿轮箱内齿圈径向", "0.098552");
+            map.put("发电机轴承", "3.0/-1.0");
             map.put("发电机后轴承", "3.0/-1.0");
             dataList.add(map);
         }
         return dataList;
     }
 
-    public static List<Map<String, Object>> createDataContent5(){
+    public static Map<String, String[]> createDataContent5(){
 
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String,Object> map1 = new HashMap<>();
-        map1.put("unit_name", "01#机组");
-        map1.put("advise", new String[]{"1.持续关注齿轮箱运行状况;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
-        list.add(map1);
+        Map<String,String[]> map = new HashMap<>();
+        map.put("01#机组", new String[]{"1.持续关注齿轮箱运行状况1;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
 
-        Map<String,Object> map2 = new HashMap<>();
-        map2.put("unit_name", "02#机组");
-        map2.put("advise", new String[]{"1.持续关注齿轮箱运行状况;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
-        list.add(map2);
+        map.put("02#机组", new String[]{"1.持续关注齿轮箱运行状况2;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
 
-        Map<String,Object> map3 = new HashMap<>();
-        map3.put("unit_name", "03#机组");
-        map3.put("advise", new String[]{"1.持续关注齿轮箱运行状况;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
-        list.add(map3);
+        map.put("03#机组", new String[]{"1.持续关注齿轮箱运行状况3;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
 
-        Map<String,Object> map4 = new HashMap<>();
-        map4.put("unit_name", "04#机组");
-        map4.put("advise", new String[]{"1.持续关注齿轮箱运行状况;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
-        list.add(map4);
+        map.put("04#机组", new String[]{"1.持续关注齿轮箱运行状况4;","2.停机检查发电机自由端轴承运行状况，如有必要，请更换轴承。"});
 
-        return list;
+        return map;
     }
 
     public static List<Map<String,Object>> createDataContent6(){
@@ -309,44 +316,44 @@ public class Docx4j2WordMain {
     public static List<Map<String,String>> createData() {
         List<Map<String,String>> mapList = new ArrayList<>();
         Map<String,String> map = new HashMap<>();
-        map.put("id", "CH1");
-        map.put("location", "主轴轴承");
+        map.put("ch", "CH1");
+        map.put("name", "主轴轴承");
         map.put("direction", "径向");
         map.put("type", "低频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH2");
-        map.put("location", "齿轮箱输入轴");
+        map.put("ch", "CH2");
+        map.put("name", "齿轮箱输入轴");
         map.put("direction", "径向");
         map.put("type", "低频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH3");
-        map.put("location", "行星齿轮");
+        map.put("ch", "CH3");
+        map.put("name", "行星齿轮");
         map.put("direction", "径向");
         map.put("type", "中高频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH4");
-        map.put("location", "齿轮箱高速轴前轴承");
+        map.put("ch", "CH4");
+        map.put("name", "齿轮箱高速轴前轴承");
         map.put("direction", "径向");
         map.put("type", "中高频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH5");
-        map.put("location", "齿轮箱输出轴");
+        map.put("ch", "CH5");
+        map.put("name", "齿轮箱输出轴");
         map.put("direction", "径向");
         map.put("type", "中高频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH6");
-        map.put("location", "发电机传动端");
+        map.put("ch", "CH6");
+        map.put("name", "发电机传动端");
         map.put("direction", "径向");
         map.put("type", "中高频加速度传感器");
         mapList.add(map);
         map = new HashMap<>();
-        map.put("id", "CH7");
-        map.put("location", "发电机自由端");
+        map.put("ch", "CH7");
+        map.put("name", "发电机自由端");
         map.put("direction", "径向");
         map.put("type", "中高频加速度传感器");
         mapList.add(map);
